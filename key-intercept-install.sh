@@ -14,7 +14,6 @@
 
 # --- Configuration ---
 VENCOORD_DIR="$HOME/Vencord"
-# The plugin folder name is now fixed to 'key-intercept' as requested.
 PLUGIN_FOLDER="key-intercept"
 PLUGIN_DEST="$VENCOORD_DIR/src/userplugins/$PLUGIN_FOLDER"
 CSP_FILE="$VENCOORD_DIR/src/main/csp/index.ts"
@@ -69,6 +68,10 @@ echo "Plugin contents copied successfully to $PLUGIN_DEST."
 
 # Change to Vencord directory for subsequent pnpm commands (Steps 3-7)
 cd "$VENCOORD_DIR" || { echo "Error: Cannot change directory to $VENCOORD_DIR. Exiting."; exit 1; }
+
+git restore package.json
+git restore pnpm-lock.yaml
+git pull
 
 # 3. pnpm Installation Check
 if ! command -v pnpm &> /dev/null
@@ -136,6 +139,14 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 echo "Supabase client installed successfully."
+
+echo "Installing ButtplugIO for compatibility with Leahs-Clicker as a workspace dependency (pnpm add buttplug -w)..."
+pnpm add buttplug -w
+if [ $? -ne 0 ]; then
+    echo "Error: pnpm add buttplug -w failed. Exiting."
+    exit 1
+fi
+echo "ButtplugIO installed successfully."
 
 # 6. Run pnpm build
 echo "Building Vencord (pnpm build)..."

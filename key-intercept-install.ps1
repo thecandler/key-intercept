@@ -88,7 +88,10 @@ try {
 
 # Ensure we are in the plugin destination directory for subsequent operations
 try {
-    Set-Location -Path $PLUGIN_DEST -ErrorAction Stop
+    Set-Location -Path $VENCOORD_DIR -ErrorAction Stop
+    git restore package.json
+    git restore pnpm-lock.yaml
+    git pull
     Write-Host "Changed current directory to $PLUGIN_DEST."
 } catch {
     Write-Host "Warning: Failed to change directory to ${PLUGIN_DEST}: $_" -ForegroundColor Yellow
@@ -165,6 +168,14 @@ if ($LASTEXITCODE -ne 0) {
     exit 1
 }
 Write-Host "Supabase client installed successfully."
+
+Write-Host "Installing ButtplugIO for compatibility with Leahs-Clicker as a workspace dependency (pnpm add buttplug -w)..."
+pnpm add buttplug -w
+if ($LASTEXITCODE -ne 0) {
+    Write-Host "Error: pnpm add buttplug -w failed. Exiting." -ForegroundColor Red
+    exit 1
+}
+Write-Host "ButtplugIO installed successfully."
 
 # 6. Run pnpm build
 Write-Host "Building Vencord (pnpm build)..."
